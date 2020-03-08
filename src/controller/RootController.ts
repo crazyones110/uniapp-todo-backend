@@ -153,4 +153,24 @@ class MemoController {
       res.status(200).send('Update Success')
     })
   }
+
+  @del('/memo')
+  @use(requireAuth)
+  deleteTodo(req: RequestWithOpenid, res: Response) {
+    User.findOneAndUpdate({
+      openid: req.openid
+    }, {
+      $pull: {
+        memo: {
+          createTime: req.body.createTime
+        }
+      }
+    }, (err, result) => {
+      if (err) {
+        res.status(500).send('Delete Error')
+        return
+      }
+      res.status(200).send('Delete Success')
+    })
+  }
 }

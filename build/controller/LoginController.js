@@ -79,7 +79,7 @@ function checkWechatLogin(req, res) {
                     case 1:
                         checkLoginResult = _c.sent();
                         userId = Date.now() + "_" + Math.random();
-                        redis_1.set(userId, openid, 100 * 60); // 100min 过期
+                        redis_1.set(userId, openid, 60 * 60 * 60 * 24 * 2); // 2天 过期
                         if (!!checkLoginResult) return [3 /*break*/, 3];
                         return [4 /*yield*/, User_1.User.create({
                                 openid: openid,
@@ -93,8 +93,13 @@ function checkWechatLogin(req, res) {
                             res.status(500).send('登录失败');
                             return [2 /*return*/];
                         }
-                        _c.label = 3;
+                        res
+                            .header('Set-Cookie', "userId=" + userId)
+                            .status(200)
+                            .send('第一次登录');
+                        return [2 /*return*/];
                     case 3:
+                        console.log(checkLoginResult);
                         res
                             .header('Set-Cookie', "userId=" + userId)
                             .status(200)
@@ -114,7 +119,12 @@ var LoginController = /** @class */ (function () {
             if (openid) {
                 // redis 中存了的情况
                 console.log('这次登录成功是使用了 redis');
-                res.status(200).send('登录成功');
+                var userId_1 = Date.now() + "_" + Math.random();
+                redis_1.set(userId_1, openid, 60 * 60 * 60 * 24 * 2); // 2天 过期
+                res
+                    .header('Set-Cookie', "userId=" + userId_1)
+                    .status(200)
+                    .send('登录成功');
                 return;
             }
             // redis 中没有，说明到期了
@@ -134,7 +144,12 @@ var LoginController = /** @class */ (function () {
             if (openid) {
                 // redis 中存了的情况
                 console.log('这次登录成功是使用了 redis');
-                res.status(200).send('登录成功');
+                var userId_2 = Date.now() + "_" + Math.random();
+                redis_1.set(userId_2, openid, 60 * 60 * 60 * 24 * 2); // 2天 过期
+                res
+                    .header('Set-Cookie', "userId=" + userId_2)
+                    .status(200)
+                    .send('登录成功');
                 return;
             }
             // redis 中没有，说明到期了

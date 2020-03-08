@@ -237,6 +237,23 @@ var MemoController = /** @class */ (function () {
             res.status(200).send('Update Success');
         });
     };
+    MemoController.prototype.deleteTodo = function (req, res) {
+        User_1.User.findOneAndUpdate({
+            openid: req.openid
+        }, {
+            $pull: {
+                memo: {
+                    createTime: req.body.createTime
+                }
+            }
+        }, function (err, result) {
+            if (err) {
+                res.status(500).send('Delete Error');
+                return;
+            }
+            res.status(200).send('Delete Success');
+        });
+    };
     __decorate([
         decorators_1.get('/memo'),
         decorators_1.use(requireAuth),
@@ -258,6 +275,13 @@ var MemoController = /** @class */ (function () {
         __metadata("design:paramtypes", [Object, Object]),
         __metadata("design:returntype", void 0)
     ], MemoController.prototype, "updateMemo", null);
+    __decorate([
+        decorators_1.del('/memo'),
+        decorators_1.use(requireAuth),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [Object, Object]),
+        __metadata("design:returntype", void 0)
+    ], MemoController.prototype, "deleteTodo", null);
     MemoController = __decorate([
         decorators_1.controller('')
     ], MemoController);

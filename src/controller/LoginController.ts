@@ -3,6 +3,7 @@ import { get, controller, bodyValidator, post } from './decorators'
 import { get as getRedis, set as setRedis } from '../db/redis'
 import axios from 'axios'
 import { User } from '../models/User'
+import { SuccessModel } from '../models/SuccessModel'
 
 function checkWechatLogin(req: Request, res: Response) {
   const code = req.params.code
@@ -23,7 +24,7 @@ function checkWechatLogin(req: Request, res: Response) {
 
       const checkLoginResult = await User.findOne({openid})
       const userId = `${Date.now()}_${Math.random()}`
-      setRedis(userId, openid, 100 * 60) // 100min 过期
+      setRedis(userId, openid, 60 * 60 * 60 * 24 * 2) // 2天 过期
 
       if (!checkLoginResult) {
         // 第一次登录，sql 中没这个数据
@@ -37,7 +38,13 @@ function checkWechatLogin(req: Request, res: Response) {
           res.status(500).send('登录失败')
           return
         }
+        res
+        .header('Set-Cookie', `userId=${userId}`)
+        .status(200)
+        .send('第一次登录')
+        return
       }
+      console.log(checkLoginResult)
       res
         .header('Set-Cookie', `userId=${userId}`)
         .status(200)
@@ -54,7 +61,13 @@ class LoginController {
       if (openid) {
         // redis 中存了的情况
         console.log('这次登录成功是使用了 redis')
-        res.status(200).send('登录成功')
+
+        const userId = `${Date.now()}_${Math.random()}`
+        setRedis(userId, openid, 60 * 60 * 60 * 24 * 2) // 2天 过期
+        res
+          .header('Set-Cookie', `userId=${userId}`)
+          .status(200)
+          .send('登录成功')
         return
       }
       // redis 中没有，说明到期了
@@ -79,7 +92,12 @@ class LoginController {
       if (openid) {
         // redis 中存了的情况
         console.log('这次登录成功是使用了 redis')
-        res.status(200).send('登录成功')
+        const userId = `${Date.now()}_${Math.random()}`
+        setRedis(userId, openid, 60 * 60 * 60 * 24 * 2) // 2天 过期
+        res
+          .header('Set-Cookie', `userId=${userId}`)
+          .status(200)
+          .send('登录成功')
         return
       }
       // redis 中没有，说明到期了
