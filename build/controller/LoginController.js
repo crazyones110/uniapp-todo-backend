@@ -52,6 +52,7 @@ var decorators_1 = require("./decorators");
 var redis_1 = require("../db/redis");
 var axios_1 = __importDefault(require("axios"));
 var User_1 = require("../models/User");
+var SuccessModel_1 = require("../models/SuccessModel");
 function checkWechatLogin(req, res) {
     var _this = this;
     var code = req.params.code;
@@ -96,14 +97,19 @@ function checkWechatLogin(req, res) {
                         res
                             .header('Set-Cookie', "userId=" + userId)
                             .status(200)
-                            .send('第一次登录');
+                            .send(new SuccessModel_1.SuccessModel('登陆成功', {
+                            memoCount: insertLoginResult.memo.length,
+                            todoCount: insertLoginResult.todo.length
+                        }));
                         return [2 /*return*/];
                     case 3:
-                        console.log(checkLoginResult);
                         res
                             .header('Set-Cookie', "userId=" + userId)
                             .status(200)
-                            .send('登录成功');
+                            .send(new SuccessModel_1.SuccessModel('登陆成功', {
+                            memoCount: checkLoginResult.memo.length,
+                            todoCount: checkLoginResult.todo.length
+                        }));
                         return [2 /*return*/];
                 }
             });

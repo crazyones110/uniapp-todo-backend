@@ -41,14 +41,19 @@ function checkWechatLogin(req: Request, res: Response) {
         res
         .header('Set-Cookie', `userId=${userId}`)
         .status(200)
-        .send('第一次登录')
+        .send(new SuccessModel('登陆成功', {
+          memoCount: insertLoginResult.memo.length,
+          todoCount: insertLoginResult.todo.length
+        }))
         return
       }
-      console.log(checkLoginResult)
       res
         .header('Set-Cookie', `userId=${userId}`)
         .status(200)
-        .send('登录成功')
+        .send(new SuccessModel('登陆成功', {
+          memoCount: checkLoginResult.memo.length,
+          todoCount: checkLoginResult.todo.length
+        }))
     })
 }
 
