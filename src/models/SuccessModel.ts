@@ -1,6 +1,7 @@
 interface returnData {
   memoCount?: number,
-  todoCount?: number
+  todoCount?: number,
+  restTodoCount?: number
 }
 
 export class SuccessModel {

@@ -77,15 +77,14 @@ var TodoController = /** @class */ (function () {
     function TodoController() {
     }
     TodoController.prototype.getTodos = function (req, res) {
-        var _a;
         return __awaiter(this, void 0, void 0, function () {
             var user;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
                     case 0: return [4 /*yield*/, User_1.User.findOne({ openid: req.openid })];
                     case 1:
-                        user = _b.sent();
-                        res.status(200).send((_a = user) === null || _a === void 0 ? void 0 : _a.todo);
+                        user = _a.sent();
+                        res.status(200).send(user === null || user === void 0 ? void 0 : user.todo);
                         return [2 /*return*/];
                 }
             });
@@ -184,15 +183,14 @@ var MemoController = /** @class */ (function () {
     function MemoController() {
     }
     MemoController.prototype.getMemos = function (req, res) {
-        var _a;
         return __awaiter(this, void 0, void 0, function () {
             var user;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
                     case 0: return [4 /*yield*/, User_1.User.findOne({ openid: req.openid })];
                     case 1:
-                        user = _b.sent();
-                        res.status(200).send((_a = user) === null || _a === void 0 ? void 0 : _a.memo);
+                        user = _a.sent();
+                        res.status(200).send(user === null || user === void 0 ? void 0 : user.memo);
                         return [2 /*return*/];
                 }
             });

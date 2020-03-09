@@ -43,7 +43,8 @@ function checkWechatLogin(req: Request, res: Response) {
         .status(200)
         .send(new SuccessModel('登陆成功', {
           memoCount: insertLoginResult.memo.length,
-          todoCount: insertLoginResult.todo.length
+          todoCount: insertLoginResult.todo.length,
+          restTodoCount: insertLoginResult.todo.filter(item => item.checked === false).length
         }))
         return
       }
@@ -52,7 +53,8 @@ function checkWechatLogin(req: Request, res: Response) {
         .status(200)
         .send(new SuccessModel('登陆成功', {
           memoCount: checkLoginResult.memo.length,
-          todoCount: checkLoginResult.todo.length
+          todoCount: checkLoginResult.todo.length,
+          restTodoCount: checkLoginResult.todo.filter(item => item.checked === false).length
         }))
     })
 }
