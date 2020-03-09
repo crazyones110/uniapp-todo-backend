@@ -28,6 +28,6 @@ app.use(body_parser_1.default.json());
 app.use(cookie_parser_1.default());
 // app.use(cookieSession({ keys: ['asdqweqwex'] }))
 app.use(AppRouter_1.AppRouter.instance);
-app.listen(3000, '0.0.0.0', function () {
-    console.log('listening on port 3000');
+app.listen(5757, '0.0.0.0', function () {
+    console.log('listening on port 5757');
 });
