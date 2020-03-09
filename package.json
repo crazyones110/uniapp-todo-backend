@@ -7,8 +7,7 @@
     "start:build": "tsc -w",
     "start:run": "nodemon build/index.js",
     "start": "cross-env NODE_ENV=dev concurrently npm:start:*",
-    "prd": "NODE_ENV=production pm2 start pm2.conf.json",
-    "prd:pm2": "pm2 start pm2.conf.json --env production"
+    "prd": "pm2 start ecosystem.config.js --env production"
   },
   "keywords": [],
   "author": "",
