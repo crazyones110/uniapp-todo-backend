@@ -70,7 +70,7 @@ function checkWechatLogin(req, res) {
         .then(function (_a) {
         var data = _a.data;
         return __awaiter(_this, void 0, void 0, function () {
-            var session_key, openid, _b, nickName, avatarUrl, checkLoginResult, userId, insertLoginResult;
+            var session_key, openid, _b, nickName, avatarUrl, checkLoginResult, userId, insertLoginResult, e_1;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
@@ -79,21 +79,29 @@ function checkWechatLogin(req, res) {
                         return [4 /*yield*/, User_1.User.findOne({ openid: openid })];
                     case 1:
                         checkLoginResult = _c.sent();
+                        console.log('checkLoginResult', checkLoginResult);
                         userId = Date.now() + "_" + Math.random();
                         redis_1.set(userId, openid, 60 * 60 * 60 * 24 * 2); // 2天 过期
-                        if (!!checkLoginResult) return [3 /*break*/, 3];
+                        if (!!checkLoginResult) return [3 /*break*/, 6];
+                        insertLoginResult = void 0;
+                        _c.label = 2;
+                    case 2:
+                        _c.trys.push([2, 4, , 5]);
                         return [4 /*yield*/, User_1.User.create({
                                 openid: openid,
                                 nickName: nickName,
                                 avatarUrl: avatarUrl
                             })];
-                    case 2:
+                    case 3:
                         insertLoginResult = _c.sent();
                         console.log('用户第一次登录，把数据存入 mongo');
-                        if (!insertLoginResult) {
-                            res.status(500).send('登录失败');
-                            return [2 /*return*/];
-                        }
+                        return [3 /*break*/, 5];
+                    case 4:
+                        e_1 = _c.sent();
+                        console.log(e_1);
+                        res.status(500).send('登录失败');
+                        return [2 /*return*/];
+                    case 5:
                         res
                             .header('Set-Cookie', "userId=" + userId)
                             .status(200)
@@ -103,7 +111,7 @@ function checkWechatLogin(req, res) {
                             restTodoCount: insertLoginResult.todo.filter(function (item) { return item.checked === false; }).length
                         }));
                         return [2 /*return*/];
-                    case 3:
+                    case 6:
                         res
                             .header('Set-Cookie', "userId=" + userId)
                             .status(200)
@@ -166,6 +174,41 @@ var LoginController = /** @class */ (function () {
             checkWechatLogin(req, res);
         });
     };
+    LoginController.prototype.updateUserInfo = function (req, res) {
+        var _this = this;
+        var userId = req.cookies.userId;
+        if (!userId) {
+            res.status(500).send(new SuccessModel_1.SuccessModel('没有userId'));
+            return;
+        }
+        redis_1.get(userId).then(function (openid) { return __awaiter(_this, void 0, void 0, function () {
+            var _a, nickName, avatarUrl, updatedUser;
+            return __generator(this, function (_b) {
+                if (openid) {
+                    _a = req.body, nickName = _a.nickName, avatarUrl = _a.avatarUrl;
+                    updatedUser = User_1.User.findOneAndUpdate({ openid: openid }, { nickName: nickName, avatarUrl: avatarUrl }, { new: true });
+                    updatedUser.findOne({ openid: openid }, function (err, user) {
+                        if (err) {
+                            res.status(500).send(new SuccessModel_1.SuccessModel('mongodb更新失败'));
+                            return;
+                        }
+                        res
+                            .status(200)
+                            .send(new SuccessModel_1.SuccessModel('用户信息更新成功', {
+                            memoCount: user === null || user === void 0 ? void 0 : user.memo.length,
+                            todoCount: user === null || user === void 0 ? void 0 : user.todo.length,
+                            restTodoCount: user === null || user === void 0 ? void 0 : user.todo.filter(function (item) { return item.checked === false; }).length
+                        }));
+                    });
+                    return [2 /*return*/];
+                }
+                // redis 中没有，说明到期了
+                console.log('redis 到期了，这次应该换userid');
+                res.status(500).send(new SuccessModel_1.SuccessModel('redis到期了'));
+                return [2 /*return*/];
+            });
+        }); });
+    };
     __decorate([
         decorators_1.get('/launchCheck'),
         __metadata("design:type", Function),
@@ -179,6 +222,12 @@ var LoginController = /** @class */ (function () {
         __metadata("design:paramtypes", [Object, Object]),
         __metadata("design:returntype", void 0)
     ], LoginController.prototype, "postLogin", null);
+    __decorate([
+        decorators_1.post('/updateUserInfo'),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [Object, Object]),
+        __metadata("design:returntype", void 0)
+    ], LoginController.prototype, "updateUserInfo", null);
     LoginController = __decorate([
         decorators_1.controller('/auth')
     ], LoginController);

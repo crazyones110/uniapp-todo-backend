@@ -14,7 +14,6 @@ exports.TodoSchema = new mongoose_1.Schema({
     category: String,
     createTime: {
         type: Number,
-        unique: true,
         required: true
     },
     checked: Boolean,

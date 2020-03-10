@@ -10,8 +10,7 @@ var Category;
 exports.MemoSchema = new mongoose_1.Schema({
     createTime: {
         type: Number,
-        required: true,
-        unique: true
+        required: true
     },
     content: {
         type: String,

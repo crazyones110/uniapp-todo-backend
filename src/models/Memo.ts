@@ -15,8 +15,7 @@ export interface IMemo extends Document {
 export const MemoSchema = new Schema({
   createTime: {
     type: Number,
-    required: true,
-    unique: true
+    required: true
   },
   content: {
     type: String,

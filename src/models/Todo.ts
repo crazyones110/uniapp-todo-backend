@@ -21,7 +21,6 @@ export const TodoSchema: Schema = new Schema({
   category: String,
   createTime: {
     type: Number,
-    unique: true,
     required: true
   },
   checked: Boolean,
